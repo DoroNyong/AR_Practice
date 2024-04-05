@@ -2,34 +2,31 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 using UnityEngine.XR.ARFoundation;
 
 public class MultiImageTracked : MonoBehaviour
 {
-    private ARTrackedImageManager arTrackedImageManager;
+    private ARTrackedImageManager ARTrackedImageManager;
 
     private Dictionary<string, GameObject> instanciatePrefab;
 
     [SerializeField]
-    private GameObject Cube;
-    [SerializeField]
-    private Color colorE0000;
-    [SerializeField]
-    private Color colorE0001;
+    private Text prefabsCountText;
 
     private void Awake()
     {
-        arTrackedImageManager = GetComponent<ARTrackedImageManager>();
+        ARTrackedImageManager = GetComponent<ARTrackedImageManager>();
     }
 
     private void OnEnable()
     {
-        arTrackedImageManager.trackedImagesChanged += OnTrackedImage;
+        ARTrackedImageManager.trackedImagesChanged += OnTrackedImage;
     }
 
     private void OnDisable()
     {
-        arTrackedImageManager.trackedImagesChanged -= OnTrackedImage;
+        ARTrackedImageManager.trackedImagesChanged -= OnTrackedImage;
     }
 
     void OnTrackedImage(ARTrackedImagesChangedEventArgs args)
@@ -52,29 +49,18 @@ public class MultiImageTracked : MonoBehaviour
 
     private void InstantiateGameObject(ARTrackedImage addedImage)
     {
-        GameObject prefab = Instantiate(Cube);
-        SkinnedMeshRenderer prefabCubeSkinnedMeshRenderer = prefab.transform.GetComponent<SkinnedMeshRenderer>();
-        prefabCubeSkinnedMeshRenderer.material = Instantiate(prefabCubeSkinnedMeshRenderer.material);
-        switch (addedImage.referenceImage.name)
-        {
-            case "E0000":
-                prefabCubeSkinnedMeshRenderer.material.color = colorE0000;
-                break;
-            case "E0001":
-                prefabCubeSkinnedMeshRenderer.material.color = colorE0001;
-                break;
-            default:
-                throw new Exception("대체 뭘 식별한거죠?");
-        }
+        GameObject prefab = Instantiate(Resources.Load<GameObject>(addedImage.referenceImage.name));
         prefab.transform.position = addedImage.transform.position;
         prefab.transform.rotation = addedImage.transform.rotation;
         prefab.transform.parent = addedImage.transform;
 
         instanciatePrefab.Add(addedImage.referenceImage.name, prefab);
+        prefabsCountText.text = instanciatePrefab.Count.ToString();
     }
 
     private void UpdateTrackingGameObject(ARTrackedImage updatedImage)
     {
+        
         if (instanciatePrefab.TryGetValue(updatedImage.referenceImage.name, out GameObject prefab))
         {
             prefab.transform.position = updatedImage.transform.position;
@@ -89,6 +75,7 @@ public class MultiImageTracked : MonoBehaviour
         {
             instanciatePrefab.Remove(removedImage.referenceImage.name);
             Destroy(prefab);
+            prefabsCountText.text = instanciatePrefab.Count.ToString();
         }
     }
 }
