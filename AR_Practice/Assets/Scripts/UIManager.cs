@@ -4,15 +4,21 @@ using UnityEngine;
 
 public class UIManager : MonoBehaviour
 {
-    // Start is called before the first frame update
-    void Start()
+    [SerializeField]
+    private GameObject settingPanel;
+
+    public void SettingBtnON()
     {
-        
+        settingPanel.SetActive(true);
     }
 
-    // Update is called once per frame
-    void Update()
+    public void SettingBtnOFF()
     {
-        
+        settingPanel.SetActive(false);
+    }
+
+    public void GameQuit()
+    {
+        Application.Quit();
     }
 }
