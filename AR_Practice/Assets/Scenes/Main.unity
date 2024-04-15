@@ -3104,6 +3104,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   settingPanel: {fileID: 1305756509}
+  weaponLeftBtn: {fileID: 341066003}
+  weaponRightBtn: {fileID: 1017716754}
 --- !u!4 &1808194483
 Transform:
   m_ObjectHideFlags: 0
